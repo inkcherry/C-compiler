@@ -17,7 +17,7 @@ int expr_addsub();     //2
 int deal_term();       //3
 int term_muldiv();     //4
 int deal_factor();     //5
-void  lexical_analysiser()   //��ʶ��NUM
+void  lexical_analysiser()   //½«Ê¶±ðNUM
 {
 
 	cursrc = src++;
@@ -49,7 +49,7 @@ int expr_addsub(int val)        //exprtail
 	}
 	else return val;
 }
-int deal_expr()           //�Ӽ�
+int deal_expr()           //¼Ó¼õ
 {
 	int val = deal_term();
 	return expr_addsub( val);
@@ -70,7 +70,7 @@ int term_muldiv(int val)
 	}
 	else return val;                        //empty;
 }
-int deal_term()			//�˳�
+int deal_term()			//³Ë³ý
 {
 	int val = deal_factor();
 	return term_muldiv( val);
