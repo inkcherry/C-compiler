@@ -10,12 +10,13 @@ int *pc,*bp,*sp,ax,cycle;  //虚拟机中的寄存器，类似于计算机中的
 int *symbols_tab,*cur_id;
 int token_val;
 int *idmain;  
+int cur_bp;   //函数堆栈帧指针
 
 enum {CHAR, INT, PTR };      // types of variable/function
                 // the `main` function
 
 
-//pc  存放吓一条计算指令
+//pc  存放下一条计算指令
 //sp  指向栈顶 栈是从高地址到低地址增长 入栈是sp减小
 //bp  指向栈的某些特定位置
 //ax  通用寄存器 用于存放指令结果
@@ -39,7 +40,9 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 	char *st_pos,*en_pos;
 	int hash;
 		while(token=*src)
-		{   src++;
+		{    
+			printf("lex %d %c :) ",token,*src);
+			src++;
 	
 			if(token=='\n')  //换行;
 			{

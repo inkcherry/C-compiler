@@ -16,9 +16,9 @@ void expression(int level)      //用于解析表达式的函数
 void program()
 {   
 	lexical_analyzer(); 
-
-    while(token>0){
-	printf("token is :%c\n",token);
+    if(token>0){
+    printf("token is :%d\n",token);
+    src++;
 	// lexical_analyzer();
  }
 }
@@ -139,28 +139,35 @@ int main(int argc,char **argv)
     //test 
     int *temp=symbols_tab;
  
-    src="";
-    while(*src){lexical_analyzer();src++;}
+    
+    while(*src){lexical_analyzer();src++;} //test three
        while(*temp)
     {
         printf("%d   ",temp[0]);
         temp=temp+IdSize;
     }
+    src=malloc(20000);
+    src[0]='1';
+    src[1]='+';
+    src[2]='2';
+    src[3]=0;
+    // *(src+1)=0;
+    program();
 
-    if ((fd = open(*argv, 0)) < 0) {
-        printf("could not open(%s)\n", *argv);
-        return -1;
-    }
+    // if ((fd = open(*argv, 0)) < 0) {
+    //     printf("could not open(%s)\n", *argv);
+    //     return -1;
+    // }
 
-    if (!(src = old_src = malloc(poolsize))) {
-        printf("could not malloc(%d) for source area\n", poolsize);
-        return -1;
-    }
-    // read the source file
-    if ((i = read(fd, src, poolsize-1)) <= 0) {
-        printf("read() returned %d\n", i);
-        return -1;
-    }
+    // if (!(src = old_src = malloc(poolsize))) {
+    //     printf("could not malloc(%d) for source area\n", poolsize);
+    //     return -1;
+    // }
+    // // read the source file
+    // if ((i = read(fd, src, poolsize-1)) <= 0) {
+    //     printf("read() returned %d\n", i);
+    //     return -1;
+    // }
 
 
  
