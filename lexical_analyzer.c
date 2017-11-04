@@ -41,7 +41,7 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 	int hash;
 		while(token=*src)
 		{    
-			printf("lex %d %c :) ",token,*src);
+			printf("lex %d %c \n ",token,*src);
 			src++;
 	
 			if(token=='\n')  //换行;
@@ -50,7 +50,7 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 			}
 	
 	
-			else if(token =="#") //跳过
+			else if(token =='#') //跳过
 			{
 					while (*src != 0 && *src != '\n') 
 					src++;

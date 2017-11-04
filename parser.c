@@ -2,11 +2,13 @@
 #include "lexical_analyzer.c" 
 int var_type;   //变量类型
 int expr_type; //表达式类型
+voiddeal_statement();
 void deal_enmu_declaration();
 void deal_function_declaration();
 void deal_function_body();
 void deal_global_declaration()    //识别全局变量 最前置的词法解析（不支持#)  
 {
+    printf("解析全局");
    int type;
    int i;
    var_type = INT;
@@ -24,6 +26,7 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
 
     if(token==Int){               //全局变量
         token_match(Int);
+        printf("declear int")
     }
     else if(token==Char){
         token_match(Char);
@@ -67,6 +70,7 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
 }
 
 void deal_enmu_declaration(){
+   printf("解析枚举类型");
    int enmu_index=0;
    while(token!='}'){
        if(token!=Id){
@@ -86,12 +90,12 @@ void deal_enmu_declaration(){
         cur_id[Class]=Num;
         cur_id[Type]=INT;
         cur_id[Value]=enmu_index++;
-        if(token==",")   
+        if(token==',')   
         lexical_analyzer();
    }
 }
 void deal_function_declaration(){
-    
+    printf("解析函数类型");
     token_match('(');
 
 
@@ -106,19 +110,19 @@ void deal_function_declaration(){
             token_match(Char);
         }
         
-        while（token==Mul){
-            match(Mul);
+        while(token==Mul){
+            token_match(Mul);
             type=type+PTR;
         }
         if(token!=Id){
             printf("%d: bad parameter declaration\n", line);
             exit(-1);
         }
-        if (current_id[Class] == Loc) {  
+        if (cur_id[Class] == Loc) {  
             printf("%d: duplicate parameter declaration\n", line);
             exit(-1);
         }
-       match(Id);
+       token_match(Id);
         //将全局变量临时保存到临时的BCLass中。再把这个变量初始化 
         cur_id[BClass]=cur_id[Class];
         cur_id[Class]=Loc;
@@ -128,39 +132,80 @@ void deal_function_declaration(){
         cur_id[Value]  = parameter_index++; 
 
         if(token==','){
-            match(',')
+            token_match(',');
         }
     }
     cur_bp=parameter_index+1; //ebp在最后一参数 下两个地址
     token_match(')');
     //参数解析结束
-    token_match('{')
+
+    token_match('{');
     //函数体解析
       //局部变量定义 代码跟全局变量定义基本一致
-    int p_localvar=cur_ebp;
+    int p_localvar=cur_bp;
     while(token==Int||token==Char){   //变量定义
             var_type=(token == Int) ? INT : CHAR;
             token_match(token);
-    }
-    while(token!=';'){
-        type=var_type;
-        while(token==Mul){
-            token_match(Mul);
-            type=type+PTR;
-        }
-        if(token!=Id){   //错误声明
-            printf("%d:bad local declaration\n",line);
-            exit(-1);
-        }
-        if(cur_id[Class]==Loc){  //重复声明 这里必须加Loc
-            printf("%d :duplicate local declaration\n",line);
-            exit(-1);
-        }
-        token_match(Id);   //变量/函数 名称
-        cur_id[type]=type;
-        
+   
+        while(token!=';'){  
+            type=var_type;
+            while(token==Mul){
+                token_match(Mul);
+                type=type+PTR;
+            }
+            if(token!=Id){   //错误声明
+                printf("%d:bad local declaration\n",line);
+                exit(-1);
+            }
+            if(cur_id[Class]==Loc){  //重复声明 
+                printf("%d :duplicate local declaration\n",line);
+                exit(-1);
+            }
+            token_match(Id);   
 
+            cur_id[BClass] = cur_id[Class]; cur_id[Class]  = Loc;
+            cur_id[BType]  = cur_id[Type];  cur_id[Type]   = type;
+            cur_id[BValue] = cur_id[Value]; cur_id[Value]  = ++p_localvar;   // index of current parameter
+            if (token == ',') {
+                token_match(',');
+            }
+        }
+        token_match(';');
     }
+
+    *++text=ENT;
+    *++text=p_localvar-cur_bp;
+    
+    while(token!='}'){
+        // deal_statement();
+    }
+    *++text=LEV;
+    
 }
 
+void expression(int level)      //用于解析表达式的函数
+{
+}
 
+void deal_statement(){
+    int *b;
+    if (token == If) {
+       token_match(If);
+       token_match('(');
+        expression(Assign);  // parse condition
+       token_match(')');
+        *++text = JZ;
+        b = ++text;
+       deal_statement();         // parsedeal_statement
+        if (token == Else) { // parse else
+           token_match(Else);
+            // emit code for JMP B
+            *b = (int)(text + 3);
+            *++text = JMP;
+            b = ++text;
+           deal_statement();
+        }
+        *b = (int)(text + 1);
+    }
+
+}

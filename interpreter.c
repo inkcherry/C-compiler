@@ -9,24 +9,26 @@
 
 
 
-void expression(int level)      //用于解析表达式的函数
-{
-}
 
 void program()
 {   
 	lexical_analyzer(); 
-    if(token>0){
-    printf("token is :%d\n",token);
-    src++;
+    // if(token>0){
+    // printf("token is :%d\n",token);
+    // src++;
+    while(token>0){
+        deal_global_declaration();
+        // deal_global_decalration();
+    }
 	// lexical_analyzer();
- }
+ 
 }
 
 int eval(){
 	int op,*tmp;
-	while(1){       //MOV指令集
-		op=*pc++;
+    while(1){       //MOV指令集
+        op=*pc++;
+       
 		if(op==IMM)      {ax=*pc++;}
 		else if(op==LC)  {ax=*(char*)ax;} 				//ax存放的地址，对其取值并存入ax 
 		else if(op==LI)  {ax=*(int *)ax;}				// 同上
@@ -77,13 +79,13 @@ int eval(){
 	}
 	return 0;
 }
-int main(int argc,char **argv)
+int main()
 {
-
+     printf("222");
      int i, fd;
 
-    argc--;
-    argv++;
+    // argc--;
+    // argv++;
 
     poolsize = 256 * 1024; // arbitrary size
     line = 1;
@@ -141,18 +143,27 @@ int main(int argc,char **argv)
  
     
     while(*src){lexical_analyzer();src++;} //test three
-       while(*temp)
-    {
-        printf("%d   ",temp[0]);
-        temp=temp+IdSize;
-    }
-    src=malloc(20000);
-    src[0]='1';
-    src[1]='+';
-    src[2]='2';
-    src[3]=0;
+    //test
+    //    while(*temp)
+    // {
+    //     printf("%d   ",temp[0]);
+    //     temp=temp+IdSize;
+    // }
+    // src=malloc(20000);
+    // src[0]='1';
+    // src[1]='+';
+    // src[2]='2';
+    // src[3]=0;
     // *(src+1)=0;
+    src=malloc(poolsize);
+    char *m="int a;";
+    i=0;
+    for( i=0;i<6;i++)
+    {src[i]=m[i];}
+    src[i]=0;
     program();
+
+
 
     // if ((fd = open(*argv, 0)) < 0) {
     //     printf("could not open(%s)\n", *argv);
@@ -172,11 +183,10 @@ int main(int argc,char **argv)
 
  
 
-    src[i] = 0; // add EOF character
-    close(fd);
-
-    program();
-
-    return eval();
+    // src[i] = 0; // add EOF character
+    // close(fd);
+    // program();
+    // return eval();
+    return 0;
 
 }
