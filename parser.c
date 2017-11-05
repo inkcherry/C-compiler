@@ -2,13 +2,13 @@
 #include "lexical_analyzer.c" 
 int var_type;   //变量类型
 int expr_type; //表达式类型
-voiddeal_statement();
+// void deal_statement();
 void deal_enmu_declaration();
 void deal_function_declaration();
 void deal_function_body();
 void deal_global_declaration()    //识别全局变量 最前置的词法解析（不支持#)  
 {
-    printf("解析全局");
+    // printf("解析全局");
    int type;
    int i;
    var_type = INT;
@@ -26,7 +26,7 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
 
     if(token==Int){               //全局变量
         token_match(Int);
-        printf("declear int")
+        // printf("declear int\n");
     }
     else if(token==Char){
         token_match(Char);
@@ -48,7 +48,8 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
             exit(-1);
         }
         token_match(Id);   //变量/函数 名称
-        cur_id[type]=type;
+       
+        cur_id[Type]=type;
         
         if(token=='(')    //函数类型 
         {
@@ -57,7 +58,9 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
             deal_function_declaration();
         }
         else {
+            // printf("before the id is %d\n",cur_id[Class]);
             cur_id[Class]=Glo;   //变量类型
+            // printf("after -----the id is %d\n",cur_id[Class]);
             cur_id[Value]=(int)data;
             data=data+sizeof(int);
         
