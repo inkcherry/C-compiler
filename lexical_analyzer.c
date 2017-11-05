@@ -1,3 +1,4 @@
+// #include<stdio.h>
 int token;          		//当前的记号
 char *src,*old_src; 		//text的指针 token的下一个字符
 int poolsize;                   //虚拟机内存开辟空间size的参数
@@ -11,6 +12,7 @@ int *symbols_tab,*cur_id;
 int token_val;
 int *idmain;  
 int cur_bp;   //函数堆栈帧指针
+// int *watch_hash_change,watch_hash_falg=0;
 
 enum {CHAR, INT, PTR };      // types of variable/function
                 // the `main` function
@@ -41,7 +43,7 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 	int hash;
 		while(token=*src)
 		{    
-			printf("lex %d %c \n ",token,*src);
+			// printf("token is %d %c \n ",token,*src);
 			src++;
 	
 			if(token=='\n')  //换行;
@@ -57,30 +59,52 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 			}    
 	
 	
-			else if((token>='a'&&token<='z')||(token>='A'&&token<="Z")||token=='_') //标识符开头;
+			else if((token>='a'&&token<='z')||(token>='A'&&token<='Z')||token=='_') //标识符开头;
 			{  
 			   st_pos=src-1;
-			   while((*src>='a'&&*src<='z')||(*src>='A'&&*src<="Z")||*src=='_'||(*src>= '0' && *src<= '9'))
-					{hash=token*147+*src;//hash映射
+			   
+			   hash=token;
+			  
+		
+			   while((*src>='a'&&*src<='z')||(*src>='A'&&*src<='Z')||*src=='_'||(*src>= '0' && *src<= '9'))
+					{hash=hash*147+*src;//hash映射
+						// printf("||||||||||||||||||||||||||||||||||||||\n");
 					 src++; 
 					}
 			   en_pos=src-1;
 	
-			   cur_id=symbols_tab;              
+			   cur_id=symbols_tab;
+			           
 				while (cur_id[Token]) {  //遍历符号表
-					if (cur_id[Hash] == hash && !memcmp((char *)cur_id[Name], st_pos, en_pos-st_pos+1)) {
-							   
+				if(token=='a')
+				{
+					printf("symbol  %s | hash  %d | token  %d\n",cur_id[Name],cur_id[Hash],cur_id[Token]);						
+
+				}
+
+					if (cur_id[Hash] == hash && !memcmp((char*)cur_id[Name], st_pos, en_pos-st_pos+1)) {
 						token = cur_id[Token];  //如果是已经存在的字符
 						return;
 					}
 					else cur_id=cur_id+IdSize;   //++
 				}
-				//如果没有return（跳出） ，下面这段相当于push			    
+				//如果没有return（跳出） ，下面这段相当于push
+				// printf("push new  %s\n\n",st_pos);	
+				    
+			
 				cur_id[Name]=(int)st_pos;
 				cur_id[Hash]=hash;
+				
+				if(token=='a'&&watch_hash_falg==0)
+				{// {   watch_hash_change=&cur_id[hash];
+					printf("%s %d $|||||||||||||||",cur_id[Name],cur_id[Hash]);
+					watch_hash_change=&cur_id[hash];
+					// cur_id[Hash]=2;
+					watch_hash_falg++;
+				}	
 				token=cur_id[Token]=Id;
-	
-					return;
+
+				return;
 			}
 	
 	

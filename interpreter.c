@@ -81,7 +81,7 @@ int eval(){
 }
 int main()
 {
-     printf("222");
+     
      int i, fd;
 
     // argc--;
@@ -139,10 +139,10 @@ int main()
     lexical_analyzer(); idmain = cur_id; // keep track of main
     
     //test 
-    int *temp=symbols_tab;
+    // int *temp=symbols_tab;
  
     
-    while(*src){lexical_analyzer();src++;} //test three
+    // while(*src){lexical_analyzer();src++;} //test three
     //test
     //    while(*temp)
     // {
@@ -159,8 +159,11 @@ int main()
     char *m="int a;";
     i=0;
     for( i=0;i<6;i++)
-    {src[i]=m[i];}
-    src[i]=0;
+    {src[i]=m[i];
+     src[i+6]=m[i];    //声明两个int i
+    }
+    src[12]=0;
+    
     program();
 
 
