@@ -26,7 +26,7 @@ int eval(){
 	int op,*tmp;
     while(1){       //MOV指令集
         op=*pc++;
-       
+    //    printf("%d\n",op);
 		if(op==IMM)      {ax=*pc++;}
 		else if(op==LC)  {ax=*(char*)ax;} 				//ax存放的地址，对其取值并存入ax 
 		else if(op==LI)  {ax=*(int *)ax;}				// 同上
@@ -78,12 +78,11 @@ int eval(){
 	return 0;
 }
 int main()
-{
+{   
      
      int i, fd;
-
-    // argc--;
-    // argv++;
+     int *tmp;
+  
 
     poolsize = 256 * 1024; // arbitrary size
     line = 1;
@@ -109,15 +108,13 @@ int main()
 
     memset(text, 0, poolsize);
     memset(data, 0, poolsize);
-    memset(stack, 0, poolsize); 
-    memset(symbols_tab,0,poolsize);
-
+    memset(stack, 0, poolsize);
+    memset(symbols_tab, 0, poolsize);
+    bp = sp = (int *)((int)stack + poolsize);
+    ax = 0;
 
     src = "char else enum if int return sizeof while "
-    "open read close printf malloc memset memcmp exit void main";
-    
-    bp = sp = (int *)((int)stack + poolsize);  
-    ax = 0;
+          "open read close printf malloc memset memcmp exit void main";
     
     i = Char;   
     while (i <= While) {     //关键字
@@ -138,7 +135,7 @@ int main()
     lexical_analyzer(); idmain = cur_id; // keep track of main
     
     //test 
-    // int *temp=symbols_tab;
+    // 
  
     
     // while(*src){lexical_analyzer();src++;} //test three
@@ -154,46 +151,46 @@ int main()
     // src[2]='2';
     // src[3]=0;
     // *(src+1)=0;
-    src=malloc(poolsize);
+    if (!(src = old_src = malloc(poolsize))) {
+        printf("could not malloc(%d) for source area\n", poolsize);
+        return -1;
+    }
     //test declare global_var
     // char *m="int a;";
     // i=0;
     // for( i=0;i<6;i++)
     // {src[i]=m[i];
-    //  src[i+6]=m[i];    //声明两个int i
+    //  src[i+6]=m[i];    //声明两个int a
     // }
     // src[12]=0;
-    
-    char *m="void f(int a,int b){}";
-    for(i=0;i<21;i++)
-    {src[i]=m[i];}
-    src[i]=0;
-    program();
+       src ="#include <stdio.h>\nint fibonacci(int i) {if (i <= 1) {return 1;}\nreturn fibonacci(i-1) + fibonacci(i-2);}\nint main(){int i;i = 0;\nwhile (i <= 10) {\nprintf(\"fibonacci(%2d) = %d\n\", i, fibonacci(i));\ni = i + 1;\n}\nreturn 0;\n}";
 
+  
+   program();
+   
+       if (!(pc = (int *)idmain[Value])) {
+           printf("main() not defined\n");
+           return -1;
+       }
+    // for(i=0;i<21;i++)
+    // {src[i]=m[i];}
+    // src[i]=0;
+  
+    // program();
 
-
-    // if ((fd = open(*argv, 0)) < 0) {
-    //     printf("could not open(%s)\n", *argv);
-    //     return -1;
-    // }
-
-    // if (!(src = old_src = malloc(poolsize))) {
-    //     printf("could not malloc(%d) for source area\n", poolsize);
-    //     return -1;
-    // }
-    // // read the source file
-    // if ((i = read(fd, src, poolsize-1)) <= 0) {
-    //     printf("read() returned %d\n", i);
-    //     return -1;
-    // }
 
 
  
 
-    // src[i] = 0; // add EOF character
-    // close(fd);
+    sp = (int *)((int)stack + poolsize);
+    *--sp = EXIT; // call exit if main returns  //入栈
+    *--sp = PUSH; tmp = sp;
+  
+    *--sp = (int)tmp;
+
+
     // program();
     // return eval();
-    return 0;
+    return eval();
 
 }

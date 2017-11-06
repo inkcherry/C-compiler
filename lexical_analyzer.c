@@ -12,7 +12,7 @@ int *symbols_tab,*cur_id;
 int token_val;
 int *idmain;  
 int cur_bp;   //函数堆栈帧指针
-// int *watch_hash_change,watch_hash_flag;
+int *watch_hash_change,watch_hash_flag;
 
 enum {CHAR, INT, PTR };      // types of variable/function
                 // the `main` function
@@ -43,6 +43,9 @@ void  lexical_analyzer (){                    //词法分析(字符转token)
 	int hash;
 		while(token=*src)
 		{    
+			// printf("[%d] ",token);
+			if(token==209)
+			printf("%s",src);
 			// printf("token is %d %c \n ",token,*src);
 			src++;
 	
