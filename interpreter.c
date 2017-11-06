@@ -113,10 +113,9 @@ int main()
     memset(symbols_tab,0,poolsize);
 
 
-    src = "char else enum if int return sizeof while ";
-    // "open read close printf malloc memset memcmp exit void main";
+    src = "char else enum if int return sizeof while "
+    "open read close printf malloc memset memcmp exit void main";
     
-        
     bp = sp = (int *)((int)stack + poolsize);  
     ax = 0;
     
@@ -156,14 +155,19 @@ int main()
     // src[3]=0;
     // *(src+1)=0;
     src=malloc(poolsize);
-    char *m="int a;";
-    i=0;
-    for( i=0;i<6;i++)
-    {src[i]=m[i];
-     src[i+6]=m[i];    //声明两个int i
-    }
-    src[12]=0;
+    //test declare global_var
+    // char *m="int a;";
+    // i=0;
+    // for( i=0;i<6;i++)
+    // {src[i]=m[i];
+    //  src[i+6]=m[i];    //声明两个int i
+    // }
+    // src[12]=0;
     
+    char *m="void f(int a,int b){}";
+    for(i=0;i<21;i++)
+    {src[i]=m[i];}
+    src[i]=0;
     program();
 
 

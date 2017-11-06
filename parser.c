@@ -44,6 +44,7 @@ void deal_global_declaration()    //识别全局变量 最前置的词法解析�
             exit(-1);
         }
         if(cur_id[Class]){  //重复声明
+            printf("%d\n",token);
             printf("%d :duplicate global declaration\n",line);
             exit(-1);
         }
@@ -98,13 +99,14 @@ void deal_enmu_declaration(){
    }
 }
 void deal_function_declaration(){
-    printf("解析函数类型");
+    printf("a new function\n");
     token_match('(');
 
 
     //解析参数
     int type, parameter_index=0;
     while(token!=')'){         //每次while匹配一个参数
+        printf("push a new para");
         type=INT;
         if(token==Int)
         token_match(Int);
@@ -144,6 +146,8 @@ void deal_function_declaration(){
 
     token_match('{');
     //函数体解析
+
+    printf("function body\n");
       //局部变量定义 代码跟全局变量定义基本一致
     int p_localvar=cur_bp;
     while(token==Int||token==Char){   //变量定义
@@ -186,29 +190,71 @@ void deal_function_declaration(){
     
 }
 
-void expression(int level)      //用于解析表达式的函数
+void deal_expression(int level)      //用于解析表达式的函数
 {
 }
 
 void deal_statement(){
-    int *b;
+    int *b,*a;
     if (token == If) {
        token_match(If);
        token_match('(');
-        expression(Assign);  // parse condition
+       deal_expression(Assign);  // parse condition
        token_match(')');
         *++text = JZ;
         b = ++text;
-       deal_statement();         // parsedeal_statement
+        deal_statement();         // parsedeal_deal_statement
         if (token == Else) { // parse else
            token_match(Else);
             // emit code for JMP B
             *b = (int)(text + 3);
             *++text = JMP;
             b = ++text;
-           deal_statement();
+            deal_statement();
         }
         *b = (int)(text + 1);
     }
 
+    else if (token == While) {
+       token_match(While);
+        a = text + 1;
+       token_match('(');
+       deal_expression(Assign);
+       token_match(')');
+        *++text = JZ;
+        b = ++text;
+        deal_statement();
+        *++text = JMP;
+        *++text = (int)a;
+        *b = (int)(text + 1);
+    }
+
+    else if (token == Return) {
+        // return [expression];
+       token_match(Return);
+        if (token != ';') {
+           deal_expression(Assign);
+        }
+       token_match(';');
+        // emit code for return
+        *++text = LEV;
+    }
+
+    else if (token == '{') {
+        // { <statement> ... }
+       token_match('{');
+        while (token != '}') {
+            deal_statement();
+        }
+       token_match('}');
+    }
+    else if (token == ';') {
+        // empty statement
+       token_match(';');
+    }
+    else {
+        // a = b; or function_call();
+       deal_expression(Assign);
+       token_match(';');
+    }
 }
